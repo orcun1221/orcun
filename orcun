@@ -1,0 +1,84 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.OleDb;
+
+namespace _10._04._2017
+{
+    public partial class Form2 : Form
+    {
+        OleDbConnection con;
+        OleDbCommand cmd;
+        OleDbDataAdapter da;
+        DataSet ds;
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        void griddoldur()
+        {
+            con=new OleDbConnection ("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=vt1.accdb");
+            da=new OleDbDataAdapter (" select * from okulvt",con);
+            ds= new DataSet();
+            con.Open();
+            da.Fill(ds,"okulvt");
+            dataGridView1.DataSource=ds.Tables["okulvt"];
+            con.Close();
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            griddoldur();
+        }
+
+        private void btnekle_Click(object sender, EventArgs e)
+        {
+            cmd = new OleDbCommand();
+            con.Open();
+            cmd.Connection = con;
+            cmd.CommandText="insert into okulvt (ogr_no,ogr_ad,og_soyad,ogr_tel) values ('"+tbno.Text+"','"+tbad.Text+"','"+tbsoyad.Text+"','"+tbtel.Text+"')";
+            cmd.ExecuteNonQuery();
+            griddoldur();
+        }
+
+        private void btnup_Click(object sender, EventArgs e)
+        {
+            cmd = new OleDbCommand();
+            con.Open();
+            cmd.Connection = con;
+            cmd.CommandText = "update okulvt set ogr_ad='" + tbad.Text + "' , og_soyad='" + tbsoyad.Text + "',ogr_tel='" + tbtel.Text + "' where ogr_no="+tbno.Text+"";
+            cmd.ExecuteNonQuery();
+            griddoldur();
+        }
+
+        private void btndel_Click(object sender, EventArgs e)
+        {
+            cmd = new OleDbCommand();
+            con.Open();
+            cmd.Connection = con;
+            cmd.CommandText = "delete from okulvt where ogr_no="+tbno.Text+"";
+            cmd.ExecuteNonQuery();
+            griddoldur();
+        }
+
+        private void tbadarama_TextChanged(object sender, EventArgs e)
+        {
+            con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=vt1.accdb");
+            da = new OleDbDataAdapter("select * from okulvt where ogr_ad like '"+tbadarama.Text+"%'",con);
+            ds = new DataSet();
+            con.Open();
+            da.Fill(ds,"okulvt");
+            dataGridView1.DataSource = ds.Tables["okulvt"];
+            con.Close();
+
+
+
+        }
+    }
+}
